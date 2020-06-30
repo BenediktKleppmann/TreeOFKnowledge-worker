@@ -46,11 +46,12 @@ application = Flask(__name__)
 def simulate():
     try:
         request_dict = request.json
-        response = Response("received", status=201)
+        return 'received'
     except Exception as ex:
-        response = Response(str(traceback.format_exc()), status=500)
+        response = make_response(str(traceback.format_exc()), 500)
+        return 'received'
 
-    return response
+    
 
 if __name__ == '__main__':
     application.run(host='0.0.0.0')
