@@ -51,21 +51,21 @@ def simulate():
     connection = psycopg2.connect(host="aa1pbfgh471h051.cee9izytbdnd.eu-central-1.rds.amazonaws.com",
                                   port="5432",
                                   database="postgres_db")
-   cursor = connection.cursor()
-   cursor.execute('''SELECT * 
+    cursor = connection.cursor()
+    cursor.execute('''SELECT * 
                 FROM collection_likelihood_fuction
                 WHERE simulation_id = 416
                  AND object_number = 1
                   AND parameter_id = 60;
                     ''')
 
-   mobile_records = cursor.fetchall() 
+    mobile_records = cursor.fetchall() 
    
-   print("Print each row and it's columns values")
-   for row in mobile_records:
-       print("Id = ", row[0], )
-       print("Model = ", row[1])
-       print("Price  = ", row[2], "\n")
+    print("Print each row and it's columns values")
+    for row in mobile_records:
+        print("Id = ", row[0], )
+        print("Model = ", row[1])
+        print("Price  = ", row[2], "\n")
 
 
     try:
