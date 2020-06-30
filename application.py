@@ -1,4 +1,5 @@
 from flask import Flask
+from flask import request
 import traceback
 
 
@@ -27,10 +28,24 @@ application = Flask(__name__)
 #     application.debug = True
 #     application.run()
 
+
+
+
+# with app.simulate('/simulate', method='POST'):
+#     try:
+#         request_dict = request.json
+#         response = Response("received", status=201)
+#     except Exception as ex:
+#         response = Response(str(traceback.format_exc()), status=500)
+
+#     return response
+
+
+
 @application.route('/simulate', methods=['POST'])
 def simulate():
     try:
-        request_dict =  request
+        request_dict = request.json
         response = Response("received", status=201)
     except Exception as ex:
         response = Response(str(traceback.format_exc()), status=500)
