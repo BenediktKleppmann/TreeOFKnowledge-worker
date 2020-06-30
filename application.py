@@ -1,5 +1,5 @@
 from flask import Flask
-from flask import request
+from flask import request, Response
 from flask import make_response
 import traceback
 
@@ -48,12 +48,15 @@ def simulate():
     try:
         request_dict = request.data
         print(str(request_dict))
-        return 'received'
+        # return 'received'
+        return Response('{}', status=201, mimetype='application/json')
     except Exception as ex:
         # response = make_response(str(traceback.format_exc()), 500)
-        return 'not received'
+        return Response('{}', status=401, mimetype='application/json')
+        # return 'not received'
 
-    
+
+
 
 if __name__ == '__main__':
     application.run(host='0.0.0.0')
