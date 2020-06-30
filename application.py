@@ -31,7 +31,7 @@ application = Flask(__name__)
 def simulate():
     try:
         request_dict =  request
-        response = Response("recieved", status=200)
+        response = Response("received", status=201)
     except Exception as ex:
         response = Response(str(traceback.format_exc()), status=500)
 
