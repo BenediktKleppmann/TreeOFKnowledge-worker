@@ -46,7 +46,8 @@ application = Flask(__name__)
 @application.route('/simulate', methods=['POST'])
 def simulate():
     try:
-        request_dict = request.json
+        request_dict = request.data
+        print(str(request_dict))
         return 'received'
     except Exception as ex:
         # response = make_response(str(traceback.format_exc()), 500)
