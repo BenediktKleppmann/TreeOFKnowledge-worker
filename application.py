@@ -49,8 +49,8 @@ def simulate():
         request_dict = request.json
         return 'received'
     except Exception as ex:
-        response = make_response(str(traceback.format_exc()), 500)
-        return 'received'
+        # response = make_response(str(traceback.format_exc()), 500)
+        return 'not received'
 
     
 
