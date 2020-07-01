@@ -51,11 +51,11 @@ def simulate():
     import psycopg2
 
 
-    connection = psycopg2.connect(user="dbadmin", password="rUWFidoMnk0SulVl4u9C", host="aa12t5um9jcjdkz.cee9izytbdnd.eu-central-1.rds.amazonaws.com", port="5432", database="postgres")
+    
+    connection = psycopg2.connect(user="dbadmin", password="rUWFidoMnk0SulVl4u9C", host="aa1pbfgh471h051.cee9izytbdnd.eu-central-1.rds.amazonaws.com", port="5432", database="postgres")
     cursor = connection.cursor()
-    cursor.execute('''INSERT INTO  tested_simulation_parameters (simulation_id, run, parameter_value, is_valid) VALUES (140, 1, 0.2848569, 'true');''')
+    cursor.execute('''INSERT INTO tested_simulation_parameters (simulation_id, run, parameter_value, is_valid) VALUES (144, 1, 0.2848569, 'true');''')
     connection.commit()
-
 
 
     try:
