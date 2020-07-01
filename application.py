@@ -48,34 +48,21 @@ application = Flask(__name__)
 def simulate():
 
 
-    connection = psycopg2.connect(host="aa1pbfgh471h051.cee9izytbdnd.eu-central-1.rds.amazonaws.com",
-                                  port="5432",
-                                  database="postgres_db")
+    import psycopg2
+    connection = psycopg2.connect(user="dbadmin", password="rUWFidoMnk0SulVl4u9C", host="aa1pbfgh471h051.cee9izytbdnd.eu-central-1.rds.amazonaws.com", port="5432", database="postgres")
     cursor = connection.cursor()
-    cursor.execute('''SELECT * 
-                FROM collection_likelihood_fuction
-                WHERE simulation_id = 416
-                 AND object_number = 1
-                  AND parameter_id = 60;
-                    ''')
+    cursor.execute('''INSERT INTO "tested_simulation_parameters" (simulation_id, run, parameter_value, is_valid) VALUES (144, 1, 0.2848569, 'true');''')
 
-    mobile_records = cursor.fetchall() 
-   
-    print("Print each row and it's columns values")
-    for row in mobile_records:
-        print("Id = ", row[0], )
-        print("Model = ", row[1])
-        print("Price  = ", row[2], "\n")
 
 
     try:
         request_dict = request.data
         print(str(request_dict))
         # return 'received'
-        return Response('{}', status=201, mimetype='application/json')
+        return Response('{}', status=200, mimetype='application/json')
     except Exception as ex:
         # response = make_response(str(traceback.format_exc()), 500)
-        return Response('{}', status=401, mimetype='application/json')
+        return Response('{}', status=400, mimetype='application/json')
         # return 'not received'
 
 
