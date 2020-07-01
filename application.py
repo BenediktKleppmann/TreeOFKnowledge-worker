@@ -1,8 +1,9 @@
-from flask import Flask
-from flask import request, Response
-from flask import make_response
+from flask import Flask, request, Response
 import traceback
 import psycopg2
+from worker import functions
+import json
+import pandas as pd
 
 
 
@@ -11,36 +12,9 @@ def say_hello(username = "World"):
     return '<p>Hello %s!</p>\n' % username
 
 
-# EB looks for an 'application' callable by default.
 application = Flask(__name__)
 
-# # add a rule for the index page.
-# application.add_url_rule('/', 'index', (lambda: header_text +
-#     say_hello() + instructions + footer_text))
 
-# # add a rule when the page is accessed with a name appended to the site
-# # URL.
-# application.add_url_rule('/<username>', 'hello', (lambda username:
-#     header_text + say_hello(username) + home_link + footer_text))
-
-# # run the app.
-# if __name__ == "__main__":
-#     # Setting debug to True enables debug output. This line should be
-#     # removed before deploying a production app.
-#     application.debug = True
-#     application.run()
-
-
-
-
-# with app.simulate('/simulate', method='POST'):
-#     try:
-#         request_dict = request.json
-#         response = Response("received", status=201)
-#     except Exception as ex:
-#         response = Response(str(traceback.format_exc()), status=500)
-
-#     return response
 
 
 
@@ -52,24 +26,57 @@ def simulate():
 
 
     try:
+        # GET PARAMETERS
         request_dict = request.data
         print(str(request_dict))
+        simulation_id = request_dict['simulation_id']
+        simulation_run_nb = request_dict['simulation_run_nb']
+        df_dict = request_dict['df_dict']
+        df = pd.DataFrame(df_dict)
+        rules = request_dict['rules']
+        priors_dict = request_dict['priors_dict']
+        batch_size = request_dict['batch_size']
+        y0_values = request_dict['y0_values']
+        is_timeseries_analysis = request_dict['is_timeseries_analysis']
+        times = request_dict['times']
+        timestep_size = request_dict['timestep_size']
+        y0_columns = request_dict['y0_columns']
+        parameter_columns = request_dict['parameter_columns']
+        y0_column_dt = request_dict['y0_column_dt']
+        error_threshold = request_dict['error_threshold']
+    
         
 
+        
+        # RUN SIMULATION AND CHECK CORRECTNESS
+        y0_values_in_simulation = functions.likelihood_learning_simulator(df, rules, priors_dict, batch_size, is_timeseries_analysis, times, timestep_size, y0_columns, parameter_columns)
+        errors_dict = functions.n_dimensional_distance(y0_values_in_simulation, y0_values, y0_columns, y0_column_dt,error_threshold, rules) 
+
+        simulation_results = {}
+        for rule in rules:
+            if rule['learn_posterior']:
+                simulation_results['nb_of_sim_in_which_rule_' + str(rule['id']) + '_was_used'] = errors_dict[rule['id']]['nb_of_sim_in_which_rule_was_used']
+                simulation_results['error_rule' + str(rule['id'])] = errors_dict[rule['id']]['error'] 
+
+
+
+
+        # SAVE RESULT IN DATABASE 
         connection = psycopg2.connect(user="dbadmin", password="rUWFidoMnk0SulVl4u9C", host="aa1pbfgh471h051.cee9izytbdnd.eu-central-1.rds.amazonaws.com", port="5432", database="postgres")
         cursor = connection.cursor()
-        sql_statement = '''INSERT INTO tested_simulation_parameters (simulation_id, run, parameter_value, is_valid) VALUES 
+        sql_statement = '''INSERT INTO tested_simulation_parameters (simulation_id, simulation_run_nb, priors_dict, simulation_results) VALUES 
                                 (%s, %s, %s, %s);
-                        ''' % (request_dict['simulation_id'], request_dict['run'], request_dict['parameter_value'], request_dict['is_valid'])
+                        ''' % (simulation_id, simulation_run_nb, json.dumps(priors_dict), json.dumps(simulation_results))
 
         cursor.execute(sql_statement)
         connection.commit()
 
+
         return Response('{}', status=200, mimetype='application/json')
     except Exception as ex:
-        # response = make_response(str(traceback.format_exc()), 500)
         return Response('{}', status=400, mimetype='application/json')
-        # return 'not received'
+
+
 
 
 
