@@ -1,7 +1,7 @@
 from flask import Flask, request, Response
 import traceback
 import psycopg2
-from worker import functions
+import functions
 import json
 import pandas as pd
 
