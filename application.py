@@ -31,6 +31,7 @@ def simulate():
         simulation_id = request_dict['simulation_id']
         run_number = request_dict['run_number']
         batch_number = request_dict['batch_number']
+        print('executing sim%s run%s batch%s' % (simulation_id, run_number, batch_number))
         df_dict = request_dict['df_dict']
         df = pd.DataFrame(df_dict)
         rules = request_dict['rules']
