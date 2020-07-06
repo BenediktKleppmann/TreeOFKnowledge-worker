@@ -14,27 +14,8 @@ application = Flask(__name__)
 
 @application.route('/simulate', methods=['POST'])
 def simulate():
+    return Response('{}', status=200, mimetype='application/json')
 
-
-    # import psycopg2
-
-
-    try:
-        # GET PARAMETERS
-
-        # SAVE RESULT IN DATABASE 
-        connection = psycopg2.connect(user="dbadmin", password="rUWFidoMnk0SulVl4u9C", host="aa1pbfgh471h051.cee9izytbdnd.eu-central-1.rds.amazonaws.com", port="5432", database="postgres")
-        cursor = connection.cursor()
-        sql_statement = '''INSERT INTO tested_simulation_parameters (simulation_id, run_number, batch_number, priors_dict, simulation_results) VALUES 
-                                (1, 2, 3, '{"test":1}', '{"test":2}');
-                        '''
-
-        cursor.execute(sql_statement)
-        connection.commit()
-
-        return Response('{}', status=200, mimetype='application/json')
-    except Exception as ex:
-        return Response('{}', status=400, mimetype='application/json')
 
 
 
