@@ -40,8 +40,8 @@ def simulate():
     connection = psycopg2.connect(user="dbadmin", password="rUWFidoMnk0SulVl4u9C", host="aa1pbfgh471h051.cee9izytbdnd.eu-central-1.rds.amazonaws.com", port="5432", database="postgres")
     cursor = connection.cursor()
     sql_statement = '''INSERT INTO tested_simulation_parameters (simulation_id, run_number, batch_number, priors_dict, simulation_results) VALUES 
-                            (%s, %s, %s, %s, %s);
-#                    ''' % (simulation_id, run_number, batch_number, json.dumps(priors_dict), json.dumps(priors_dict))
+                            (%s, %s, %s, '%s', '%s');
+#                    ''' % (simulation_id, run_number, batch_number, json.dumps(priors_dict), '{}')
 
     cursor.execute(sql_statement)
 
