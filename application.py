@@ -39,14 +39,13 @@ def simulate():
     # SAVE RESULT IN DATABASE 
     connection = psycopg2.connect(user="dbadmin", password="rUWFidoMnk0SulVl4u9C", host="aa1pbfgh471h051.cee9izytbdnd.eu-central-1.rds.amazonaws.com", port="5432", database="postgres")
     cursor = connection.cursor()
-    # sql_statement = '''INSERT INTO tested_simulation_parameters (simulation_id, run_number, batch_number, priors_dict, simulation_results) VALUES 
-    #                         (1, 2, 3, '{}', '{}');
-    #                 ''' 
+    sql_statement = '''INSERT INTO tested_simulation_parameters (simulation_id, run_number, batch_number, priors_dict, simulation_results) VALUES 
+                            (1, 2, 3, '{}', '{}');
+                    ''' 
 
-    # cursor.execute(sql_statement)
-    cursor.execute('''select * from tested_simulation_parameters;
-                    ''')
-    # connection.commit()
+    cursor.execute(sql_statement)
+
+    connection.commit()
 
     return Response('{}', status=200, mimetype='application/json')
 
