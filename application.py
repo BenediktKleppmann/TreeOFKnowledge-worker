@@ -15,7 +15,7 @@ application = Flask(__name__)
 @application.route('/simulate', methods=['POST'])
 def simulate():
 
-
+    print('test test test')
     # request_dict = request.data
     # simulation_id = request_dict['simulation_id']
     # run_number = request_dict['run_number']
