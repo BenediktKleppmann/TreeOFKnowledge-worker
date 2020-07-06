@@ -43,7 +43,7 @@ def simulate():
     simulation_results = {}
     for rule in rules:
         if rule['learn_posterior']:
-            simulation_results['nb_of_sim_in_which_rule_' + str(rule['id']) + '_was_used'] = errors_dict[rule['id']]['nb_of_sim_in_which_rule_was_used']
+            simulation_results['nb_of_sim_in_which_rule_' + str(rule['id']) + '_was_used'] = int(errors_dict[rule['id']]['nb_of_sim_in_which_rule_was_used'])
             simulation_results['error_rule' + str(rule['id'])] = errors_dict[rule['id']]['error'] 
 
 
