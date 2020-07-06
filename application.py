@@ -16,7 +16,7 @@ application = Flask(__name__)
 def simulate():
 
     print('test test test')
-    request_dict = request.data
+    request_dict = request.json
     simulation_id = request_dict['simulation_id']
     run_number = request_dict['run_number']
     batch_number = request_dict['batch_number']
