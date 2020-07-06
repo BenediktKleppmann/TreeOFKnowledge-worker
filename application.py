@@ -3,7 +3,7 @@ import traceback
 import psycopg2
 # import functions
 # import json
-# import pandas as pd
+import pandas as pd
 
 
 
@@ -15,11 +15,31 @@ application = Flask(__name__)
 @application.route('/simulate', methods=['POST'])
 def simulate():
 
-        connection = psycopg2.connect(user="dbadmin", password="rUWFidoMnk0SulVl4u9C", host="aa1pbfgh471h051.cee9izytbdnd.eu-central-1.rds.amazonaws.com", port="5432", database="postgres")
-        cursor = connection.cursor()
+
+    request_dict = request.data
+    simulation_id = request_dict['simulation_id']
+    run_number = request_dict['run_number']
+    batch_number = request_dict['batch_number']
+    print('executing sim%s run%s batch%s' % (simulation_id, run_number, batch_number))
+    df_dict = request_dict['df_dict']
+    df = pd.DataFrame(df_dict)
+    rules = request_dict['rules']
+    priors_dict = request_dict['priors_dict']
+    batch_size = request_dict['batch_size']
+    y0_values = request_dict['y0_values']
+    is_timeseries_analysis = request_dict['is_timeseries_analysis']
+    times = request_dict['times']
+    timestep_size = request_dict['timestep_size']
+    y0_columns = request_dict['y0_columns']
+    parameter_columns = request_dict['parameter_columns']
+    y0_column_dt = request_dict['y0_column_dt']
+    error_threshold = request_dict['error_threshold']
+
+    connection = psycopg2.connect(user="dbadmin", password="rUWFidoMnk0SulVl4u9C", host="aa1pbfgh471h051.cee9izytbdnd.eu-central-1.rds.amazonaws.com", port="5432", database="postgres")
+    cursor = connection.cursor()
 
 
-    return Response('{}', status=201, mimetype='application/json')
+    return Response('{}', status=200, mimetype='application/json')
 
 
 
