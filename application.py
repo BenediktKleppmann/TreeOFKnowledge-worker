@@ -1,6 +1,6 @@
 from flask import Flask, request, Response
 import traceback
-# import psycopg2
+import psycopg2
 # import functions
 # import json
 # import pandas as pd
@@ -21,11 +21,16 @@ def simulate():
 
     try:
         # GET PARAMETERS
-        request_dict = request.data
-        simulation_id = request_dict['simulation_id']
-        run_number = request_dict['run_number']
-        batch_number = request_dict['batch_number']
-        print('executing sim%s run%s batch%s' % (simulation_id, run_number, batch_number))
+
+        # SAVE RESULT IN DATABASE 
+        connection = psycopg2.connect(user="dbadmin", password="rUWFidoMnk0SulVl4u9C", host="aa1pbfgh471h051.cee9izytbdnd.eu-central-1.rds.amazonaws.com", port="5432", database="postgres")
+        cursor = connection.cursor()
+        sql_statement = '''INSERT INTO tested_simulation_parameters (simulation_id, run_number, batch_number, priors_dict, simulation_results) VALUES 
+                                (1, 2, 3, '{"test":1}', '{"test":2}');
+                        '''
+
+        cursor.execute(sql_statement)
+        connection.commit()
 
         return Response('{}', status=200, mimetype='application/json')
     except Exception as ex:
@@ -83,7 +88,7 @@ def simulate():
 #         cursor = connection.cursor()
 #         sql_statement = '''INSERT INTO tested_simulation_parameters (simulation_id, run_number, batch_number, priors_dict, simulation_results) VALUES 
 #                                 (%s, %s, %s, %s, %s);
-#                         ''' % (simulation_id, simulation_run_nb, batch_number, json.dumps(priors_dict), json.dumps(simulation_results))
+#                         ''' % (simulation_id, run_number, batch_number, json.dumps(priors_dict), json.dumps(simulation_results))
 
 #         cursor.execute(sql_statement)
 #         connection.commit()
