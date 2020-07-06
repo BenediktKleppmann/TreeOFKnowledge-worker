@@ -1,9 +1,9 @@
 from flask import Flask, request, Response
 import traceback
-import psycopg2
-import functions
-import json
-import pandas as pd
+# import psycopg2
+# import functions
+# import json
+# import pandas as pd
 
 
 
@@ -16,7 +16,7 @@ application = Flask(__name__)
 def simulate():
 
 
-    import psycopg2
+    # import psycopg2
 
 
     try:
