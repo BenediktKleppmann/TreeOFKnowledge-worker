@@ -1,4 +1,6 @@
 import pandas as pd
+import numpy as np
+from scipy.stats import rv_histogram
 
 
 def likelihood_learning_simulator(df_original, rules, priors_dict, batch_size, is_timeseries_analysis, times, timestep_size, y0_columns, parameter_columns):
@@ -134,16 +136,16 @@ def n_dimensional_distance(u, v, y0_columns, y0_column_dt,error_threshold, rules
 
     total_error = np.zeros(shape=len(u))
     dimensionality = np.zeros(shape=len(u))
-    for y0_column in self.y0_columns:
+    for y0_column in y0_columns:
         period_columns = [col for col in u_df.columns if col.split('period')[0] == y0_column]
-        if self.y0_column_dt[y0_column] in ['string','bool','relation']:
+        if y0_column_dt[y0_column] in ['string','bool','relation']:
             for period_column in period_columns:
                 error = 1. - np.equal(np.array(u_df[period_column]), np.array(v_df[period_column])).astype(int)
                 error[pd.isnull(v_df[period_column])] = 0 # set the error to zero where the correct value was not given
                 error[pd.isnull(u_df[period_column])] = 0 # set the error to zero where the simulation value was not given
                 total_error += error
                 dimensionality += 1 - np.array(np.logical_or(v_df[period_column].isnull(),u_df[period_column].isnull()).astype(int))
-        elif self.y0_column_dt[y0_column] in ['int','real']:
+        elif y0_column_dt[y0_column] in ['int','real']:
             for period_column in period_columns:
                 period_number = max(int(period_column.split('period')[1]), 1)
   
@@ -159,7 +161,7 @@ def n_dimensional_distance(u, v, y0_columns, y0_column_dt,error_threshold, rules
 
                 residuals = np.abs(np.array(u_df[period_column]) - np.array(v_df[period_column]))
                 non_null_residuals = residuals[~np.isnan(residuals)]
-                nth_percentile = np.percentile(non_null_residuals, self.error_threshold*100) if len(non_null_residuals) > 0 else 1# whereby n is the error_threshold. It therefore automatically adapts to the senistivity...
+                nth_percentile = np.percentile(non_null_residuals, error_threshold*100) if len(non_null_residuals) > 0 else 1# whereby n is the error_threshold. It therefore automatically adapts to the senistivity...
                 error_divisor = nth_percentile if nth_percentile != 0 else 1
                 error_in_error_range =  residuals/error_divisor
                 # pdb.set_trace()
