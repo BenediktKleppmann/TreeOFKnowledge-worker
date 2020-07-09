@@ -37,7 +37,7 @@ def simulate():
     cursor = connection.cursor()
     cursor.execute('SELECT validation_data FROM collection_simulation_model WHERE id=%s;' % simulation_id)
 
-    validation_data_json = cursor.fetchall()[0]
+    validation_data_json = cursor.fetchall()[0][0]
     validation_data = json.loads(validation_data_json)
     y0_values = validation_data['y0_values'] 
     df = pd.DataFrame.from_dict(validation_data['df'])
