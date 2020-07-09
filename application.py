@@ -21,12 +21,9 @@ def simulate():
     run_number = request_dict['run_number']
     batch_number = request_dict['batch_number']
     print('executing sim%s run%s batch%s' % (simulation_id, run_number, batch_number))
-    df_dict = request_dict['df']
-    df = pd.DataFrame(df_dict)
     rules = request_dict['rules']
     priors_dict = request_dict['priors_dict']
     batch_size = request_dict['batch_size']
-    y0_values = request_dict['y0_values']
     is_timeseries_analysis = request_dict['is_timeseries_analysis']
     times = request_dict['times']
     timestep_size = request_dict['timestep_size']
@@ -34,6 +31,17 @@ def simulate():
     parameter_columns = request_dict['parameter_columns']
     y0_column_dt = request_dict['y0_column_dt']
     error_threshold = request_dict['error_threshold']
+
+
+    connection = psycopg2.connect(user="dbadmin", password="rUWFidoMnk0SulVl4u9C", host="aa1pbfgh471h051.cee9izytbdnd.eu-central-1.rds.amazonaws.com", port="5432", database="ebdb")
+    cursor = connection.cursor()
+    cursor.execute('SELECT validation_data FROM collection_simulation_model WHERE id=%s;' % simulation_id)
+
+    validation_data_json = cursor.fetchall()[0]
+    validation_data = json.loads(validation_data_json)
+    y0_values = validation_data['y0_values'] 
+    df = pd.DataFrame.from_dict(validation_data['df'])
+
 
 
     #RUN SIMULATION AND CHECK CORRECTNESS
@@ -49,7 +57,7 @@ def simulate():
 
 
     # SAVE RESULT IN DATABASE 
-    connection = psycopg2.connect(user="dbadmin", password="rUWFidoMnk0SulVl4u9C", host="aa1pbfgh471h051.cee9izytbdnd.eu-central-1.rds.amazonaws.com", port="5432", database="postgres")
+    connection = psycopg2.connect(user="dbadmin", password="rUWFidoMnk0SulVl4u9C", host="aa1pbfgh471h051.cee9izytbdnd.eu-central-1.rds.amazonaws.com", port="5432", database="ebdb")
     cursor = connection.cursor()
     sql_statement = '''INSERT INTO tested_simulation_parameters (simulation_id, run_number, batch_number, priors_dict, simulation_results) VALUES 
                             (%s, %s, %s, '%s', '%s');
