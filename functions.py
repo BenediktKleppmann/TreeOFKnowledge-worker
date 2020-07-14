@@ -110,6 +110,10 @@ def likelihood_learning_simulator(df_original, rules, priors_dict, batch_size, i
             del rule['rule_was_used_in_simulation']
 
 
+    print('=========================================')
+    print('y0_values_in_simulation:' + str(y0_values_in_simulation.columns))
+    print('df[parameter_columns]]:' + str(df[parameter_columns].columns))
+    print('=========================================')
     y0_values_in_simulation = pd.concat([y0_values_in_simulation,df[parameter_columns]], axis=1)
     y0_values_in_simulation.index = range(len(y0_values_in_simulation))
     return y0_values_in_simulation.to_dict('records')
