@@ -15,7 +15,6 @@ application = Flask(__name__)
 @application.route('/simulate', methods=['POST'])
 def simulate():
 
-    print('test test test')
     request_dict = request.json
     simulation_id = request_dict['simulation_id']
     run_number = request_dict['run_number']
@@ -32,11 +31,12 @@ def simulate():
     y0_column_dt = request_dict['y0_column_dt']
     error_threshold = request_dict['error_threshold']
 
-
+    print('batch%s - 1')
     connection = psycopg2.connect(user="dbadmin", password="rUWFidoMnk0SulVl4u9C", host="aa1pbfgh471h051.cee9izytbdnd.eu-central-1.rds.amazonaws.com", port="5432", database="ebdb")
     cursor = connection.cursor()
     cursor.execute('SELECT validation_data FROM collection_simulation_model WHERE id=%s;' % simulation_id)
 
+    print('batch%s - 2')
     validation_data_json = cursor.fetchall()[0][0]
     validation_data = json.loads(validation_data_json)
     y0_values = validation_data['y0_values'] 
@@ -45,9 +45,11 @@ def simulate():
 
 
     #RUN SIMULATION AND CHECK CORRECTNESS
+    print('batch%s - 3')
     y0_values_in_simulation = functions.likelihood_learning_simulator(df, rules, priors_dict, batch_size, is_timeseries_analysis, times, timestep_size, y0_columns, parameter_columns)
     errors_dict = functions.n_dimensional_distance(y0_values_in_simulation, y0_values, y0_columns, y0_column_dt,error_threshold, rules) 
 
+    print('batch%s - 4')
     simulation_results = {}
     for rule in rules:
         if rule['learn_posterior']:
@@ -57,6 +59,7 @@ def simulate():
 
 
     # SAVE RESULT IN DATABASE 
+    print('batch%s - 5')
     connection = psycopg2.connect(user="dbadmin", password="rUWFidoMnk0SulVl4u9C", host="aa1pbfgh471h051.cee9izytbdnd.eu-central-1.rds.amazonaws.com", port="5432", database="ebdb")
     cursor = connection.cursor()
     sql_statement = '''INSERT INTO tested_simulation_parameters (simulation_id, run_number, batch_number, priors_dict, simulation_results) VALUES 
@@ -64,9 +67,9 @@ def simulate():
                     ''' % (simulation_id, run_number, batch_number, json.dumps(priors_dict), json.dumps(simulation_results))
 
     cursor.execute(sql_statement)
-
     connection.commit()
 
+    print('batch%s - 6')
     return Response('{}', status=200, mimetype='application/json')
 
 
