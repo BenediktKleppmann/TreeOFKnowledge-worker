@@ -23,7 +23,7 @@ def likelihood_learning_simulator(df_original, rules, priors_dict, batch_size, i
                 df['triggerThresholdForRule' + str(rule['id'])] =  rv_histogram(rule['histogram']).rvs(size=batch_size)
             for used_parameter_id in rule['used_parameter_ids']:
                 try:
-                    df['param' + str(used_parameter_id)] = rv_histogram(rule['parameters'][used_parameter_id]['histogram']).rvs(size=batch_size)
+                    df['param' + str(used_parameter_id)] = rv_histogram(rule['parameters'][str(used_parameter_id)]['histogram']).rvs(size=batch_size)
                 except:
                     print('didnt work for rule' + str(rule['id']) + ' parameters1 =  ' + str(rule['used_parameter_ids']))
                     print('rule' + str(rule['id']) + ' parameters2 =  ' + str(rule['parameters'].keys()))
