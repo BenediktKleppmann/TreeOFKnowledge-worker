@@ -8,12 +8,10 @@ def likelihood_learning_simulator(df_original, rules, priors_dict, batch_size, i
     print('---- likelihood_learning_simulator ----')
     df = df_original.copy()
 
-
+    print('3.1')
     for rule_nb in range(len(rules)):
         rules[rule_nb]['rule_was_used_in_simulation'] = [False]*batch_size
         rule = rules[rule_nb]
-        print('preparing for rule%s - learn_posterior:%s ; has_probability_1:%s' % (rule['id'], rule['learn_posterior'], rule['has_probability_1']))
-
         if rule['learn_posterior']:
             if not rule['has_probability_1']:
                 df['triggerThresholdForRule' + str(rule['id'])] = priors_dict['triggerThresholdForRule' + str(rule['id'])]
@@ -23,12 +21,7 @@ def likelihood_learning_simulator(df_original, rules, priors_dict, batch_size, i
             if not rule['has_probability_1']:
                 df['triggerThresholdForRule' + str(rule['id'])] =  rv_histogram(rule['histogram']).rvs(size=batch_size)
             for used_parameter_id in rule['used_parameter_ids']:
-                try:
-                    df['param' + str(used_parameter_id)] = rv_histogram(rule['parameters'][str(used_parameter_id)]['histogram']).rvs(size=batch_size)
-                except:
-                    print('didnt work for rule' + str(rule['id']) + ' parameters1 =  ' + str(rule['used_parameter_ids']))
-                    print('rule' + str(rule['id']) + ' parameters2 =  ' + str(rule['parameters'].keys()))
-                    print('looking for param' + str(used_parameter_id) + ' ...')
+                df['param' + str(used_parameter_id)] = rv_histogram(rule['parameters'][str(used_parameter_id)]['histogram']).rvs(size=batch_size)
 
 
     if is_timeseries_analysis: 
@@ -36,7 +29,7 @@ def likelihood_learning_simulator(df_original, rules, priors_dict, batch_size, i
     else:
         df[y0_columns] = None
 
-
+    print('3.2')
     y0_values_in_simulation = pd.DataFrame(index=range(batch_size))
     for period in range(len(times[1:])):
         df['randomNumber'] = np.random.random(batch_size)
@@ -109,8 +102,9 @@ def likelihood_learning_simulator(df_original, rules, priors_dict, batch_size, i
         y0_values_in_this_period = pd.DataFrame(df[y0_columns])
         y0_values_in_this_period.columns = [col + 'period' + str(period+1) for col in y0_values_in_this_period.columns] #faster version
         y0_values_in_simulation = y0_values_in_simulation.join(y0_values_in_this_period)
+        print('3.3 - ' + str(period))
 
-
+    print('3.4')
     for rule in rules:  
         if rule['learn_posterior']:
             y0_values_in_simulation['rule_used_in_simulation_' + str(rule['id'])] = rule['rule_was_used_in_simulation']

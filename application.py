@@ -48,7 +48,9 @@ def simulate():
     #RUN SIMULATION AND CHECK CORRECTNESS
     print('batch%s - 3' % batch_number)
     y0_values_in_simulation = functions.likelihood_learning_simulator(df, rules, priors_dict, batch_size, is_timeseries_analysis, times, timestep_size, y0_columns, parameter_columns)
+    print('batch%s - 3.5' % batch_number)
     errors_dict = functions.n_dimensional_distance(y0_values_in_simulation, y0_values, y0_columns, y0_column_dt,error_threshold, rules) 
+    print('batch%s - 3.6' % batch_number)
 
     print('batch%s - 4' % batch_number)
     simulation_results = {}
