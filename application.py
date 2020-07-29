@@ -41,6 +41,7 @@ def simulate():
     validation_data = json.loads(validation_data_json)
     y0_values = validation_data['y0_values'] 
     df = pd.DataFrame.from_dict(validation_data['df'])
+    batch_size = len(df)
 
 
 
