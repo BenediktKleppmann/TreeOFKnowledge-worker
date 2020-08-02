@@ -90,12 +90,13 @@ def likelihood_learning_simulator(df_original, rules, priors_dict, batch_size, i
 
             else:
                 # new_values = rule['effect_exec']
-                new_values = pd.Series(json.loads(rule['effect_exec']) * batch_size)
+                new_values = pd.Series([rule['effect_exec']] * batch_size)
 
 
             # df.loc[satisfying_rows,rule['column_to_change']] = new_values 
             satisfying_rows[satisfying_rows.isna()] = False
             new_values[np.logical_not(satisfying_rows)] = df.loc[np.logical_not(satisfying_rows),rule['column_to_change']]
+            new_values[new_values.isna()] = df.loc[new_values.isna(),rule['column_to_change']]
             df[rule['column_to_change']] = new_values
 
 
