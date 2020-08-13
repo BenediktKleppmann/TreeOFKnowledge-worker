@@ -171,9 +171,8 @@ def n_dimensional_distance(u, v, y0_columns, y0_column_dt,error_threshold, rules
                 nth_percentile = np.percentile(non_null_residuals, error_threshold*100) if len(non_null_residuals) > 0 else 1# whereby n is the error_threshold. It therefore automatically adapts to the senistivity...
                 error_divisor = nth_percentile if nth_percentile != 0 else 1
                 error_in_error_range =  residuals/error_divisor
-                # pdb.set_trace()
                 error_in_error_range_non_null = np.nan_to_num(error_in_error_range, nan=0)  
-                error_in_error_range_non_null = np.minimum(error_in_error_range_non_null, 1)
+                # error_in_error_range_non_null = np.minimum(error_in_error_range_non_null, 1)
 
                 true_change_factor = (np.array(v_df[period_column])/np.array(v_df[period_column.split('period')[0]]))
                 true_change_factor_per_period = np.power(true_change_factor, (1/period_number))
@@ -181,7 +180,7 @@ def n_dimensional_distance(u, v, y0_columns, y0_column_dt,error_threshold, rules
                 simulated_change_factor_per_period = np.power(simulated_change_factor, (1/period_number))
                 error_of_value_change = np.abs(simulated_change_factor_per_period - true_change_factor_per_period) 
                 error_of_value_change_non_null = np.nan_to_num(error_of_value_change, nan=0)  
-                error_of_value_change_non_null = np.minimum(error_of_value_change_non_null, 1)
+                # error_of_value_change_non_null = np.minimum(error_of_value_change_non_null, 1)
 
                 error = 0.5*np.minimum(error_in_error_range_non_null,error_of_value_change_non_null) + 0.25*np.sqrt(error_in_error_range_non_null) + 0.25*np.sqrt(error_of_value_change_non_null)
                 
