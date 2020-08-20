@@ -67,13 +67,15 @@ def likelihood_learning_simulator(df_original, rules, priors_dict, batch_size, i
                     condition_satisfying_rows = pd.Series([True] * batch_size)
 
 
-            # --------  used rules  --------
-            if rule['learn_posterior']:
-                rule['rule_was_used_in_simulation'] = rule['rule_was_used_in_simulation'] | condition_satisfying_rows
 
-
-            # --------  THEN  --------
+            # --------  new_values  --------
             if rule['effect_is_calculation']: 
+                if 'sums' in rule:
+                    for sum_number in rule['sums'].keys():
+                        df['sum' + str(sum_number)] = 0
+                        for sum_term in rule['sums'][sum_number]:
+                            df['sum' + str(sum_number)] += pd.eval(sum_term).fillna(0)
+
                 new_values = pd.eval(rule['effect_exec'])
                 if rule['changed_var_data_type'] in ['relation','int']:
                     nan_rows = new_values.isnull()
@@ -93,7 +95,14 @@ def likelihood_learning_simulator(df_original, rules, priors_dict, batch_size, i
                 new_values = pd.Series([rule['effect_exec']] * batch_size)
 
 
-            # df.loc[satisfying_rows,rule['column_to_change']] = new_values 
+            # --------  used rules  --------
+            if rule['learn_posterior']:
+                    rule_was_used_this_period = condition_satisfying_rows & new_values.notnull()
+                    rule['rule_was_used_in_simulation'] = rule['rule_was_used_in_simulation'] | rule_was_used_this_period
+
+
+
+            # --------  Apply the Change (new_values)  --------
             satisfying_rows[satisfying_rows.isna()] = False
             new_values[np.logical_not(satisfying_rows)] = df.loc[np.logical_not(satisfying_rows),rule['column_to_change']]
             new_values[new_values.isna()] = df.loc[new_values.isna(),rule['column_to_change']]
@@ -168,27 +177,25 @@ def n_dimensional_distance(u, v, y0_columns, y0_column_dt,error_threshold, rules
 
                 residuals = np.abs(np.array(u_df[period_column]) - np.array(v_df[period_column]))
                 non_null_residuals = residuals[~np.isnan(residuals)]
-                nth_percentile = np.percentile(non_null_residuals, error_threshold*100) if len(non_null_residuals) > 0 else 1# whereby n is the error_threshold. It therefore automatically adapts to the senistivity...
+                nth_percentile = np.percentile(non_null_residuals, self.error_threshold*100) if len(non_null_residuals) > 0 else 1# whereby n is the error_threshold. It therefore automatically adapts to the senistivity...
                 error_divisor = nth_percentile if nth_percentile != 0 else 1
                 error_in_error_range =  residuals/error_divisor
-                error_in_error_range_non_null = np.nan_to_num(error_in_error_range, nan=0)  
-                # error_in_error_range_non_null = np.minimum(error_in_error_range_non_null, 1)
+                error_in_error_range = np.sqrt(error_in_error_range)
 
                 true_change_factor = (np.array(v_df[period_column])/np.array(v_df[period_column.split('period')[0]]))
                 true_change_factor_per_period = np.power(true_change_factor, (1/period_number))
                 simulated_change_factor = (np.array(u_df[period_column])/np.array(v_df[period_column.split('period')[0]]))
                 simulated_change_factor_per_period = np.power(simulated_change_factor, (1/period_number))
                 error_of_value_change = np.abs(simulated_change_factor_per_period - true_change_factor_per_period) 
-                error_of_value_change_non_null = np.nan_to_num(error_of_value_change, nan=0)  
-                # error_of_value_change_non_null = np.minimum(error_of_value_change_non_null, 1)
+                error_of_value_change = np.sqrt(error_of_value_change)
 
-                error = 0.5*np.minimum(error_in_error_range_non_null,error_of_value_change_non_null) + 0.25*np.sqrt(error_in_error_range_non_null) + 0.25*np.sqrt(error_of_value_change_non_null)
-                
-                null_value_places = np.logical_or(np.isnan(error_in_error_range), np.isnan(error_of_value_change))
+                both_errors = np.array([error_in_error_range, error_of_value_change])
+                error = (np.nanmin(both_errors, axis=0) + np.nanmax(both_errors, axis=0))/ 2
+                error = 1 - np.exp(-2*error)
+                null_value_places = np.isnan(error)
                 error[null_value_places] = 0
-
                 dimensionality += 1 - null_value_places.astype('int')
-                total_error += error 
+                    total_error += error 
 
     non_validated_rows = dimensionality == 0
     dimensionality = np.maximum(dimensionality, [1]*len(u))
