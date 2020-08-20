@@ -177,7 +177,7 @@ def n_dimensional_distance(u, v, y0_columns, y0_column_dt,error_threshold, rules
 
                 residuals = np.abs(np.array(u_df[period_column]) - np.array(v_df[period_column]))
                 non_null_residuals = residuals[~np.isnan(residuals)]
-                nth_percentile = np.percentile(non_null_residuals, self.error_threshold*100) if len(non_null_residuals) > 0 else 1# whereby n is the error_threshold. It therefore automatically adapts to the senistivity...
+                nth_percentile = np.percentile(non_null_residuals, error_threshold*100) if len(non_null_residuals) > 0 else 1# whereby n is the error_threshold. It therefore automatically adapts to the senistivity...
                 error_divisor = nth_percentile if nth_percentile != 0 else 1
                 error_in_error_range =  residuals/error_divisor
                 error_in_error_range = np.sqrt(error_in_error_range)
