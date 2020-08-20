@@ -195,7 +195,7 @@ def n_dimensional_distance(u, v, y0_columns, y0_column_dt,error_threshold, rules
                 null_value_places = np.isnan(error)
                 error[null_value_places] = 0
                 dimensionality += 1 - null_value_places.astype('int')
-                    total_error += error 
+                total_error += error 
 
     non_validated_rows = dimensionality == 0
     dimensionality = np.maximum(dimensionality, [1]*len(u))
