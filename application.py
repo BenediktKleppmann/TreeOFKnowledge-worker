@@ -53,7 +53,7 @@ def simulate():
     print('batch%s - 3.6' % batch_number)
 
     print('batch%s - 4' % batch_number)
-    simulation_results = {}
+    simulation_results = {'error':errors_dict['error'] }
     for rule in rules:
         if rule['learn_posterior']:
             simulation_results['nb_of_sim_in_which_rule_' + str(rule['id']) + '_was_used'] = int(errors_dict[rule['id']]['nb_of_sim_in_which_rule_was_used'])
