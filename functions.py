@@ -197,8 +197,8 @@ def n_dimensional_distance(u, v, y0_columns, y0_column_dt,error_threshold, rules
 
     errors_dict = {'all_errors':error, 'error': error.mean()}
     for rule in rules:
-        if rule['learn_posterior']:
-            rule_used_in_simulation = u_df['rule_used_in_simulation_' + str(rule['id'])]
-            errors_dict[rule['id']] = {'error': error[rule_used_in_simulation].mean(), 'nb_of_sim_in_which_rule_was_used': rule_used_in_simulation.sum()}
+        if rule['learn_posterior'] and 'rule_used_in_simulation_' + str(rule['id']) in u_df.columns:
+                rule_used_in_simulation = u_df['rule_used_in_simulation_' + str(rule['id'])]
+                errors_dict[rule['id']] = {'error': error[rule_used_in_simulation].mean(), 'nb_of_sim_in_which_rule_was_used': rule_used_in_simulation.sum()}
 
     return errors_dict
