@@ -8,6 +8,11 @@ def likelihood_learning_simulator(df_original, rules, priors_dict, batch_size, i
     print('---- likelihood_learning_simulator ----')
     df = df_original.copy()
 
+    print('- 1 -------------------')
+    print(str(df.columns))
+    print(str(parameter_columns))
+    print('--------------------')
+
     for rule_nb in range(len(rules)):
         rules[rule_nb]['rule_was_used_in_simulation'] = [False]*batch_size
         rule = rules[rule_nb]
@@ -116,7 +121,7 @@ def likelihood_learning_simulator(df_original, rules, priors_dict, batch_size, i
             y0_values_in_simulation['rule_used_in_simulation_' + str(rule['id'])] = rule['rule_was_used_in_simulation']
             del rule['rule_was_used_in_simulation']
 
-    print('--------------------')
+    print('-- 2 ------------------')
     print(str(df.columns))
     print(str(parameter_columns))
     print('--------------------')
@@ -205,3 +210,8 @@ def n_dimensional_distance(u, v, y0_columns, y0_column_dt,error_threshold, rules
                 errors_dict[rule['id']] = {'error': error[rule_used_in_simulation].mean(), 'nb_of_sim_in_which_rule_was_used': rule_used_in_simulation.sum()}
 
     return errors_dict
+
+
+
+
+
