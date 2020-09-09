@@ -11,6 +11,7 @@ def likelihood_learning_simulator(df_original, rules, priors_dict, batch_size, i
     print('- 1 -------------------')
     print(str(df.columns))
     print(str(parameter_columns))
+    print(rules)
     print('--------------------')
 
     for rule_nb in range(len(rules)):
