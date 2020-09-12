@@ -15,6 +15,7 @@ def likelihood_learning_simulator(df_original, rules, priors_dict, batch_size, i
     print('--------------------')
 
     for rule_nb in range(len(rules)):
+        print('**** rule ' + str(rule['id']) + '  ****')
         rules[rule_nb]['rule_was_used_in_simulation'] = [False]*batch_size
         rule = rules[rule_nb]
         if rule['learn_posterior']:
