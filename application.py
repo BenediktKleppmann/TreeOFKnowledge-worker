@@ -77,7 +77,7 @@ def simulate():
     cursor.execute(sql_statement)
     connection.commit()
 
-    print('batch%s - 6 - %s' % (batch_number, simulation_results))
+    print('batch%s - 6 - %s  (simulation_id=%s; run_number=%s)' % (batch_number, simulation_results, simulation_id))
     return Response('{}', status=200, mimetype='application/json')
 
 
