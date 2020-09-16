@@ -5,6 +5,7 @@ import functions
 import json
 import pandas as pd
 import boto3
+import time
 
 
 
@@ -16,6 +17,7 @@ application = Flask(__name__)
 @application.route('/simulate', methods=['POST'])
 def simulate():
 
+    start_time = time.time()
     request_dict = request.json
     simulation_id = request_dict['simulation_id']
     run_number = request_dict['run_number']
@@ -32,7 +34,7 @@ def simulate():
     y0_column_dt = request_dict['y0_column_dt']
     error_threshold = request_dict['error_threshold']
 
-    print('batch%s - 1' % batch_number)
+    print('batch%s - 1 (%s)' % (batch_number, time.time()-start_time))
     # connection = psycopg2.connect(user="dbadmin", password="rUWFidoMnk0SulVl4u9C", host="aa1pbfgh471h051.cee9izytbdnd.eu-central-1.rds.amazonaws.com", port="5432", database="ebdb")
     # cursor = connection.cursor()
     # cursor.execute('SELECT validation_data FROM collection_simulation_model WHERE id=%s;' % simulation_id)
@@ -51,13 +53,13 @@ def simulate():
 
 
     #RUN SIMULATION AND CHECK CORRECTNESS
-    print('batch%s - 3' % batch_number)
+    print('batch%s - 3 (%s)' % (batch_number, time.time()-start_time))
     y0_values_in_simulation = functions.likelihood_learning_simulator(df, rules, priors_dict, batch_size, is_timeseries_analysis, times, timestep_size, y0_columns, parameter_columns)
-    print('batch%s - 3.5' % batch_number)
+    print('batch%s - 3.5 (%s)' % (batch_number, time.time()-start_time))
     errors_dict = functions.n_dimensional_distance(y0_values_in_simulation, y0_values, y0_columns, y0_column_dt,error_threshold, rules) 
-    print('batch%s - 3.6' % batch_number)
+    print('batch%s - 3.6 (%s)' % (batch_number, time.time()-start_time))
 
-    print('batch%s - 4' % batch_number)
+    print('batch%s - 4 (%s)' % (batch_number, time.time()-start_time))
     simulation_results = {'error':errors_dict['error'] }
     for rule in rules:
         if rule['learn_posterior']:
@@ -67,7 +69,7 @@ def simulate():
 
 
     # SAVE RESULT IN DATABASE 
-    print('batch%s - 5' % batch_number)
+    print('batch%s - 5 (%s)' % (batch_number, time.time()-start_time))
     connection = psycopg2.connect(user="dbadmin", password="rUWFidoMnk0SulVl4u9C", host="aa1pbfgh471h051.cee9izytbdnd.eu-central-1.rds.amazonaws.com", port="5432", database="ebdb")
     cursor = connection.cursor()
     sql_statement = '''INSERT INTO tested_simulation_parameters (simulation_id, run_number, batch_number, priors_dict, simulation_results) VALUES 
@@ -77,7 +79,7 @@ def simulate():
     cursor.execute(sql_statement)
     connection.commit()
 
-    print('batch%s - 6 - %s  (simulation_id=%s; run_number=%s)' % (batch_number, simulation_results, simulation_id))
+    print('batch%s - 6 - %s  (simulation_id=%s; run_number=%s) (%s)' % (batch_number, simulation_results, simulation_id, time.time()-start_time))
     return Response('{}', status=200, mimetype='application/json')
 
 
