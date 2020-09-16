@@ -4,6 +4,7 @@ import psycopg2
 import functions
 import json
 import pandas as pd
+import boto3
 
 
 
@@ -32,13 +33,16 @@ def simulate():
     error_threshold = request_dict['error_threshold']
 
     print('batch%s - 1' % batch_number)
-    connection = psycopg2.connect(user="dbadmin", password="rUWFidoMnk0SulVl4u9C", host="aa1pbfgh471h051.cee9izytbdnd.eu-central-1.rds.amazonaws.com", port="5432", database="ebdb")
-    cursor = connection.cursor()
-    cursor.execute('SELECT validation_data FROM collection_simulation_model WHERE id=%s;' % simulation_id)
+    # connection = psycopg2.connect(user="dbadmin", password="rUWFidoMnk0SulVl4u9C", host="aa1pbfgh471h051.cee9izytbdnd.eu-central-1.rds.amazonaws.com", port="5432", database="ebdb")
+    # cursor = connection.cursor()
+    # cursor.execute('SELECT validation_data FROM collection_simulation_model WHERE id=%s;' % simulation_id)
+    # validation_data_json = cursor.fetchall()[0][0]
+    # validation_data = json.loads(validation_data_json)
 
-    print('batch%s - 2' % batch_number)
-    validation_data_json = cursor.fetchall()[0][0]
-    validation_data = json.loads(validation_data_json)
+    s3 = boto3.resource('s3')
+    obj = s3.Object('elasticbeanstalk-eu-central-1-662304246363', 'SimulationModels/simulation_' + str(self.simulation_id) + '_validation_data.json')
+    validation_data = json.loads(obj.get()['Body'].read().decode('utf-8'))
+
     y0_values = validation_data['y0_values'] 
     df = pd.DataFrame.from_dict(validation_data['df'])
     batch_size = len(df)
