@@ -40,7 +40,7 @@ def simulate():
     # validation_data = json.loads(validation_data_json)
 
     s3 = boto3.resource('s3')
-    obj = s3.Object('elasticbeanstalk-eu-central-1-662304246363', 'SimulationModels/simulation_' + str(self.simulation_id) + '_validation_data.json')
+    obj = s3.Object('elasticbeanstalk-eu-central-1-662304246363', 'SimulationModels/simulation_' + str(simulation_id) + '_validation_data.json')
     validation_data = json.loads(obj.get()['Body'].read().decode('utf-8'))
 
     y0_values = validation_data['y0_values'] 
