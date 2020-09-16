@@ -108,7 +108,7 @@ def likelihood_learning_simulator(df_original, rules, priors_dict, batch_size, i
             df[rule['column_to_change']] = new_values
 
         print('-----')
-        print('df.columns = ' + str(df.columns))
+        print('df.columns = ' + str(list(df.columns)))
         print('y0_columns = ' + str(y0_columns))
         print('-----')
         y0_values_in_this_period = pd.DataFrame(df[y0_columns])

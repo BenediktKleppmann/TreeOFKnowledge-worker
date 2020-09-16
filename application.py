@@ -39,7 +39,8 @@ def simulate():
     # validation_data_json = cursor.fetchall()[0][0]
     # validation_data = json.loads(validation_data_json)
 
-    s3 = boto3.resource('s3')
+    session = boto3.session.Session()
+    s3 = session.resource('s3')
     obj = s3.Object('elasticbeanstalk-eu-central-1-662304246363', 'SimulationModels/simulation_' + str(simulation_id) + '_validation_data.json')
     validation_data = json.loads(obj.get()['Body'].read().decode('utf-8'))
 
