@@ -16,7 +16,7 @@ application = Flask(__name__)
 
 @application.route('/simulate', methods=['POST'])
 def simulate():
-
+    print('----------  simulate   ------------')
     start_time = time.time()
     request_dict = request.json
     simulation_id = request_dict['simulation_id']
@@ -44,7 +44,11 @@ def simulate():
     session = boto3.session.Session()
     s3 = session.resource('s3')
     obj = s3.Object('elasticbeanstalk-eu-central-1-662304246363', 'SimulationModels/simulation_' + str(simulation_id) + '_validation_data.json')
-    validation_data = json.loads(obj.get()['Body'].read().decode('utf-8'))
+    s3_document = obj.get()
+    document_body = s3_document['Body'].read()
+    document_body_str = document_body.decode('utf-8')
+    validation_data = json.loads(document_body_str)
+
 
     y0_values = validation_data['y0_values'] 
     df = pd.DataFrame.from_dict(validation_data['df'])
