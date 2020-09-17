@@ -8,7 +8,7 @@ def likelihood_learning_simulator(df_original, rules, priors_dict, batch_size, i
     print('---- likelihood_learning_simulator ----')
     df = df_original.copy()
 
-
+    print('lls1')
     for rule_nb in range(len(rules)):
         rules[rule_nb]['rule_was_used_in_simulation'] = [False]*batch_size
         rule = rules[rule_nb]
@@ -23,16 +23,19 @@ def likelihood_learning_simulator(df_original, rules, priors_dict, batch_size, i
             for used_parameter_id in rule['used_parameter_ids']:
                 df['param' + str(used_parameter_id)] = rv_histogram(rule['parameters'][str(used_parameter_id)]['histogram']).rvs(size=batch_size)
 
-
+    print('lls2')
     if is_timeseries_analysis: 
         df['delta_t'] = timestep_size
     else:
         df[y0_columns] = None
 
+    print('lls3')
     y0_values_in_simulation = pd.DataFrame(index=range(batch_size))
     for period in range(len(times[1:])):
         df['randomNumber'] = np.random.random(batch_size)
+        print('lls4 - period ' + str(period))
         for rule in rules:
+            print('lls4 - period ' + str(period) + ' - rule ' + str(rule['id']))
             populated_df_rows = pd.Series([True] * len(df))
             for used_column in rule['used_columns']:
                 populated_df_rows = populated_df_rows & ~df[used_column].isna()
@@ -108,16 +111,18 @@ def likelihood_learning_simulator(df_original, rules, priors_dict, batch_size, i
             df[rule['column_to_change']] = new_values
 
 
+        print('lls5 - period ' + str(period))
         y0_values_in_this_period = pd.DataFrame(df[y0_columns])
         y0_values_in_this_period.columns = [col + 'period' + str(period+1) for col in y0_values_in_this_period.columns] #faster version
         y0_values_in_simulation = y0_values_in_simulation.join(y0_values_in_this_period)
 
+    print('lls3')
     for rule in rules:  
         if rule['learn_posterior']:
             y0_values_in_simulation['rule_used_in_simulation_' + str(rule['id'])] = rule['rule_was_used_in_simulation']
             del rule['rule_was_used_in_simulation']
 
-
+    print('lls6')
     y0_values_in_simulation = pd.concat([y0_values_in_simulation,df[parameter_columns]], axis=1)
     y0_values_in_simulation.index = range(len(y0_values_in_simulation))
     return y0_values_in_simulation.to_dict('records')
