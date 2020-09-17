@@ -30,6 +30,8 @@ def simulate():
     times = request_dict['times']
     timestep_size = request_dict['timestep_size']
     y0_columns = request_dict['y0_columns']
+    if isinstance(y0_columns, str):
+        y0_columns = json.loads(y0_columns)
     parameter_columns = request_dict['parameter_columns']
     y0_column_dt = request_dict['y0_column_dt']
     error_threshold = request_dict['error_threshold']
