@@ -111,18 +111,20 @@ def likelihood_learning_simulator(df_original, rules, priors_dict, batch_size, i
             df[rule['column_to_change']] = new_values
 
 
-        print('lls5 - period ' + str(period))
+        print('lls5 - period ' + str(period) + ' - ' + str(len(set(y0_columns) - set(df.columns))))
         y0_values_in_this_period = pd.DataFrame(df[y0_columns])
+        print('lls6 - period ' + str(period))
         y0_values_in_this_period.columns = [col + 'period' + str(period+1) for col in y0_values_in_this_period.columns] #faster version
         y0_values_in_simulation = y0_values_in_simulation.join(y0_values_in_this_period)
 
-    print('lls3')
+
+    print('lls7')
     for rule in rules:  
         if rule['learn_posterior']:
             y0_values_in_simulation['rule_used_in_simulation_' + str(rule['id'])] = rule['rule_was_used_in_simulation']
             del rule['rule_was_used_in_simulation']
 
-    print('lls6')
+    print('lls8')
     y0_values_in_simulation = pd.concat([y0_values_in_simulation,df[parameter_columns]], axis=1)
     y0_values_in_simulation.index = range(len(y0_values_in_simulation))
     return y0_values_in_simulation.to_dict('records')
