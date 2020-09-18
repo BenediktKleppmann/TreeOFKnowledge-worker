@@ -124,7 +124,8 @@ def likelihood_learning_simulator(df_original, rules, priors_dict, batch_size, i
         try:
             y0_values_in_this_period = pd.DataFrame(df[y0_columns])
         except:
-            print("THERE WAS AN ERROR, apparently %s is not in %s" % (y0_columns, list(df.columns))
+            print("THERE WAS AN ERROR, apparently %s is not in %s" % (y0_columns, list(df.columns)))
+
         print('lls6 - period ' + str(period))
         y0_values_in_this_period.columns = [col + 'period' + str(period+1) for col in y0_values_in_this_period.columns] #faster version
         y0_values_in_simulation = y0_values_in_simulation.join(y0_values_in_this_period)
