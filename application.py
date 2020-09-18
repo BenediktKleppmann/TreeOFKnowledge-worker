@@ -19,6 +19,9 @@ def simulate():
     print('----------  simulate   ------------')
     start_time = time.time()
     request_dict = request.json
+    print('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$')
+    print(request_dict.keys())
+    print('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$')
     y_value_attributes = request_dict['y_value_attributes']
     simulation_id = request_dict['simulation_id']
     run_number = request_dict['run_number']
