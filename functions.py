@@ -33,14 +33,16 @@ def likelihood_learning_simulator(df_original, rules, priors_dict, batch_size, i
     y0_values_in_simulation = pd.DataFrame(index=range(batch_size))
     for period in range(len(times[1:])):
         df['randomNumber'] = np.random.random(batch_size)
-        print('lls4 - period ' + str(period))
         for rule in rules:
-            print('lls4 - period ' + str(period) + ' - rule ' + str(rule['id']))
+            if period=19 and rule['id']=93:
+                print('lls4 - period ' + str(period) + ' - rule ' + str(rule['id']))
             populated_df_rows = pd.Series([True] * len(df))
             for used_column in rule['used_columns']:
                 populated_df_rows = populated_df_rows & ~df[used_column].isna()
             populated_df = df[populated_df_rows]
 
+            if period=19 and rule['id']=93:
+                print('lls5 - period ' + str(period) + ' - rule ' + str(rule['id']))
             if rule['is_conditionless']:
                 condition_satisfying_rows = pd.Series([True] * batch_size)
                 if rule['has_probability_1']:
@@ -71,6 +73,8 @@ def likelihood_learning_simulator(df_original, rules, priors_dict, batch_size, i
 
 
             # --------  new_values  --------
+            if period=19 and rule['id']=93:
+                print('lls6 - period ' + str(period) + ' - rule ' + str(rule['id']))
             if rule['effect_is_calculation']: 
                 if 'sums' in rule:
                     for sum_number in rule['sums'].keys():
@@ -98,6 +102,8 @@ def likelihood_learning_simulator(df_original, rules, priors_dict, batch_size, i
 
 
             # --------  used rules  --------
+            if period=19 and rule['id']=93:
+                print('lls7 - period ' + str(period) + ' - rule ' + str(rule['id']))
             if rule['learn_posterior']:
                 rule_was_used_this_period = condition_satisfying_rows & new_values.notnull()
                 rule['rule_was_used_in_simulation'] = rule['rule_was_used_in_simulation'] | rule_was_used_this_period
@@ -105,12 +111,15 @@ def likelihood_learning_simulator(df_original, rules, priors_dict, batch_size, i
 
 
             # --------  Apply the Change (new_values)  --------
+            if period=19 and rule['id']=93:
+                print('lls8 - period ' + str(period) + ' - rule ' + str(rule['id']))
             satisfying_rows[satisfying_rows.isna()] = False
             new_values[np.logical_not(satisfying_rows)] = df.loc[np.logical_not(satisfying_rows),rule['column_to_change']]
             new_values[new_values.isna()] = df.loc[new_values.isna(),rule['column_to_change']]
             df[rule['column_to_change']] = new_values
 
-
+        if period = 19:
+        print('lls9')
         print('lls5 - period ' + str(period) + ' - ' + str(len(set(y0_columns) - set(df.columns))))
         y0_values_in_this_period = pd.DataFrame(df[y0_columns])
         print('lls6 - period ' + str(period))
