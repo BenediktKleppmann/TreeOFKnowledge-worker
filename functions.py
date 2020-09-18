@@ -4,7 +4,7 @@ from scipy.stats import rv_histogram
 import json
 
 
-def likelihood_learning_simulator(df_original, rules, priors_dict, batch_size, is_timeseries_analysis, times, timestep_size, y0_columns, parameter_columns):
+def likelihood_learning_simulator(y_value_attributes, df_original, rules, priors_dict, batch_size, is_timeseries_analysis, times, timestep_size, y0_columns, parameter_columns):
     print('---- likelihood_learning_simulator ----')
     df = df_original.copy()
 
@@ -124,7 +124,9 @@ def likelihood_learning_simulator(df_original, rules, priors_dict, batch_size, i
         try:
             y0_values_in_this_period = pd.DataFrame(df[y0_columns])
         except:
-            print("THERE WAS AN ERROR, apparently %s is not in %s" % (y0_columns, list(df.columns)))
+            print('''THERE WAS AN ERROR, apparently %s 
+                     is not in %s
+                     y_value_attributes = %s''' % (y0_columns, list(df.columns), str(y_value_attributes)))
 
         print('lls6 - period ' + str(period))
         y0_values_in_this_period.columns = [col + 'period' + str(period+1) for col in y0_values_in_this_period.columns] #faster version

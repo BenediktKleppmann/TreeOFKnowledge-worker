@@ -19,6 +19,7 @@ def simulate():
     print('----------  simulate   ------------')
     start_time = time.time()
     request_dict = request.json
+    y_value_attributes = request_dict['y_value_attributes']
     simulation_id = request_dict['simulation_id']
     run_number = request_dict['run_number']
     batch_number = request_dict['batch_number']
@@ -35,6 +36,7 @@ def simulate():
     parameter_columns = request_dict['parameter_columns']
     y0_column_dt = request_dict['y0_column_dt']
     error_threshold = request_dict['error_threshold']
+
 
     print('batch%s - 1 (%s)' % (batch_number, time.time()-start_time))
     # connection = psycopg2.connect(user="dbadmin", password="rUWFidoMnk0SulVl4u9C", host="aa1pbfgh471h051.cee9izytbdnd.eu-central-1.rds.amazonaws.com", port="5432", database="ebdb")
@@ -60,7 +62,7 @@ def simulate():
 
     #RUN SIMULATION AND CHECK CORRECTNESS
     print('batch%s - 3 (%s)' % (batch_number, time.time()-start_time))
-    y0_values_in_simulation = functions.likelihood_learning_simulator(df, rules, priors_dict, batch_size, is_timeseries_analysis, times, timestep_size, y0_columns, parameter_columns)
+    y0_values_in_simulation = functions.likelihood_learning_simulator(y_value_attributes, df, rules, priors_dict, batch_size, is_timeseries_analysis, times, timestep_size, y0_columns, parameter_columns)
     print('batch%s - 3.5 (%s)' % (batch_number, time.time()-start_time))
     errors_dict = functions.n_dimensional_distance(y0_values_in_simulation, y0_values, y0_columns, y0_column_dt,error_threshold, rules) 
     print('batch%s - 3.6 (%s)' % (batch_number, time.time()-start_time))
