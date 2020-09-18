@@ -21,8 +21,17 @@ def simulate():
     request_dict = request.json
     print('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$')
     print(request_dict.keys())
-    print('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$')
     y_value_attributes = request_dict['y_value_attributes']
+
+    connection = psycopg2.connect(user="dbadmin", password="rUWFidoMnk0SulVl4u9C", host="aa1pbfgh471h051.cee9izytbdnd.eu-central-1.rds.amazonaws.com", port="5432", database="ebdb")
+    cursor = connection.cursor()
+    sql_statement = '''SELECT simulation_name FROM collection_simulation_model WHERE id=489;
+                    ''' 
+
+    cursor.execute(sql_statement)
+    print(str(cursor.fetchall()))
+    print('$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$')
+    
     simulation_id = request_dict['simulation_id']
     run_number = request_dict['run_number']
     batch_number = request_dict['batch_number']
